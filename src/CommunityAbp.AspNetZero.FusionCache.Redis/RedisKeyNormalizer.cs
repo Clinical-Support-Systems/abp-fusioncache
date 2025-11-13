@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommunityAbp.AspNetZero.FusionCache.Redis
+namespace CommunityAbp.AspNetZero.FusionCache.Redis;
+
+internal class RedisKeyNormalizer
 {
-    internal class RedisKeyNormalizer
-    {
-    }
 }

@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommunityAbp.AspNetZero.FusionCache.Redis.Internal
+namespace CommunityAbp.AspNetZero.FusionCache.Redis.Internal;
+
+internal class RedisConnectionMultiplexerProvider
 {
-    internal class RedisConnectionMultiplexerProvider
-    {
-    }
 }
