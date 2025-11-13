@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="src/CommunityAbp.AspNetZero.FusionCache.Redis/CommunityAbp.AspNetZero.FusionCache.Redis.csproj" Id="74a79023-e6c3-4fc2-a6c7-1a95617e54c6" />
+  <Project Path="src/CommunityAbp.AspNetZero.FusionCache/CommunityAbp.AspNetZero.FusionCache.csproj" Id="b272e5f2-79e6-42d1-b03a-4450bdf22bff" />
+</Solution>

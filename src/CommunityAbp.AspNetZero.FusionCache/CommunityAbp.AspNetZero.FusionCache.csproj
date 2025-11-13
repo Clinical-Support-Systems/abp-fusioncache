@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<PackageId>CommunityAbp.AspNetZero.FusionCache</PackageId>
+		<PackageDescription>FusionCache integration for AspNetZero/ABP Framework with hybrid caching and advanced resiliency features</PackageDescription>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Abp" Version="10.3.*" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.*" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.*" />
+		<PackageReference Include="ZiggyCreatures.FusionCache" Version="2.4.*" />
+		<PackageReference Include="ZiggyCreatures.FusionCache.Serialization.SystemTextJson" Version="2.4.0" />
+	</ItemGroup>
+
+</Project>
