@@ -3,17 +3,76 @@
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
+		<Nullable>enable</Nullable>	
+
+		<!-- Package Information -->
 		<PackageId>CommunityAbp.AspNetZero.FusionCache</PackageId>
-		<PackageDescription>FusionCache integration for AspNetZero/ABP Framework with hybrid caching and advanced resiliency features</PackageDescription>
+		<PackageVersion>1.0.0</PackageVersion>
+		<Authors>Clinical Support Systems</Authors>
+		<Description>FusionCache integration for AspNetZero/ABP Framework with hybrid caching and advanced resiliency features</Description>
+		<PackageProjectUrl>https://github.com/kfrancis/CommunityAbp.AspNetZero.DistributedEventBus</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/kfrancis/CommunityAbp.AspNetZero.DistributedEventBus</RepositoryUrl>
+		<PackageTags>distributed;eventbus;aspnetzero</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<IsPackable>true</IsPackable>
+
+		<!-- Build Configuration -->
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IncludeSymbols>true</IncludeSymbols>
+		<DebugType>portable</DebugType>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+
+		<!-- MinVer Configuration -->
+		<MinVerTagPrefix>v</MinVerTagPrefix>
+		<MinVerSkip>false</MinVerSkip>
 	</PropertyGroup>
+
+	<PropertyGroup>
+		<!-- Enable NuGet package auditing -->
+		<NuGetAudit>true</NuGetAudit>
+
+		<!-- Audit direct and transitive packages -->
+		<NuGetAuditMode>all</NuGetAuditMode>
+
+		<!-- Report low, moderate, high and critical advisories -->
+		<NuGetAuditLevel>low</NuGetAuditLevel>
+
+		<!-- Fails the build on CI or on release when a vulnerability is detected -->
+		<WarningsAsErrors Condition="$(ContinuousIntegrationBuild) == 'true' OR '$(Configuration)' == 'Release'">
+			(WarningsAsErrors);NU1900;NU1901;NU1902;NU1903;NU1904
+		</WarningsAsErrors>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+		<PackageReference Include="Roslynator.Analyzers" Version="4.14.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Abp" Version="10.3.*" />
+		<PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.39">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.*" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.*" />
+		<PackageReference Include="MinVer" Version="6.0.0">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="ZiggyCreatures.FusionCache" Version="2.4.*" />
 		<PackageReference Include="ZiggyCreatures.FusionCache.Serialization.SystemTextJson" Version="2.4.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\..\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 </Project>
