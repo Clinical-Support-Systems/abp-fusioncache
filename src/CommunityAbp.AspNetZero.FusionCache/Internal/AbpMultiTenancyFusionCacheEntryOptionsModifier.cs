@@ -1,4 +1,4 @@
-﻿using Abp.Configuration.Startup;
+using Abp.Configuration.Startup;
 using Abp.Dependency;
 using Abp.Runtime.Session;
 using CommunityAbp.AspNetZero.FusionCache.Options;
@@ -133,6 +133,8 @@ public class AbpMultiTenancyFusionCacheEntryOptionsModifier
         if (_cacheOptions.EnableEagerRefresh)
         {
             var adjustedThreshold = Math.Min(_cacheOptions.EagerRefreshThreshold + 0.1f, 0.95f);
+            // Round to 2 decimal places to avoid floating-point precision issues
+            adjustedThreshold = (float)Math.Round(adjustedThreshold, 2, MidpointRounding.AwayFromZero);
             options.SetEagerRefresh(adjustedThreshold);
         }
 

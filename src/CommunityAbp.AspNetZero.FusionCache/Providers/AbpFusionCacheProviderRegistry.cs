@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using Abp.Dependency;
 
 namespace CommunityAbp.AspNetZero.FusionCache.Providers;
@@ -40,7 +40,10 @@ public class AbpFusionCacheProviderRegistry : IAbpFusionCacheProviderRegistry, I
     {
         var instance = _iocManager.Resolve<T>();
         _distributedProviders.TryAdd(instance.ProviderName, typeof(T));
-        _iocManager.Register<T>(DependencyLifeStyle.Transient);
+        if (!_iocManager.IsRegistered<T>())
+        {
+            _iocManager.Register<T>(DependencyLifeStyle.Transient);
+        }
     }
 
     /// <summary>
@@ -53,9 +56,13 @@ public class AbpFusionCacheProviderRegistry : IAbpFusionCacheProviderRegistry, I
     /// interface and be a reference type.</typeparam>
     public void RegisterBackplaneProvider<T>() where T : class, IAbpFusionCacheBackplaneProvider
     {
-        var instance = _iocManager.Resolve<T>();
+        // Use Activator to get the provider name without requiring IoC registration
+        var instance = Activator.CreateInstance<T>();
         _backplaneProviders.TryAdd(instance.ProviderName, typeof(T));
-        _iocManager.Register<T>(DependencyLifeStyle.Transient);
+        if (!_iocManager.IsRegistered<T>())
+        {
+            _iocManager.Register<T>(DependencyLifeStyle.Transient);
+        }
     }
 
     /// <summary>
