@@ -1,0 +1,111 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
+name: publish
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/CommunityAbp.AspNetZero.FusionCache/CommunityAbp.AspNetZero.FusionCache.csproj'
+      - 'src/CommunityAbp.AspNetZero.FusionCache.Redis/CommunityAbp.AspNetZero.FusionCache.Redis.csproj'
+      - '.github/workflows/publish.yml'
+  pull_request:
+    branches: [ '*' ]
+    paths:
+      - 'src/CommunityAbp.AspNetZero.FusionCache/CommunityAbp.AspNetZero.FusionCache.csproj'
+      - 'src/CommunityAbp.AspNetZero.FusionCache.Redis/CommunityAbp.AspNetZero.FusionCache.Redis.csproj'
+      - '.github/workflows/publish.yml'
+  release:
+    types: [ published ]
+
+env:
+  DOTNET_MULTILEVEL_LOOKUP: 0
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: 1
+  DOTNET_NOLOGO: true
+  NuGetDirectory: ${{ github.workspace }}/nuget
+
+defaults:
+  run:
+    shell: pwsh
+
+permissions: {}
+
+jobs:
+  build_test_pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          show-progress: false
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - name: Restore
+        run: |
+          dotnet restore src/CommunityAbp.AspNetZero.FusionCache/CommunityAbp.AspNetZero.FusionCache.csproj
+          dotnet restore src/CommunityAbp.AspNetZero.FusionCache.Redis/CommunityAbp.AspNetZero.FusionCache.Redis.csproj
+          dotnet restore tests/CommunityAbp.AspNetZero.FusionCache.Tests/CommunityAbp.AspNetZero.FusionCache.Tests.csproj
+          dotnet restore tests/CommunityAbp.AspNetZero.FusionCache.Redis.Tests/CommunityAbp.AspNetZero.FusionCache.Redis.Tests.csproj
+      - name: Build (Release)
+        run: |
+          dotnet build src/CommunityAbp.AspNetZero.FusionCache/CommunityAbp.AspNetZero.FusionCache.csproj --configuration Release --no-restore /clp:ErrorsOnly
+          dotnet build src/CommunityAbp.AspNetZero.FusionCache.Redis/CommunityAbp.AspNetZero.FusionCache.Redis.csproj --configuration Release --no-restore /clp:ErrorsOnly
+          dotnet build tests/CommunityAbp.AspNetZero.FusionCache.Tests/CommunityAbp.AspNetZero.FusionCache.Tests.csproj --configuration Release --no-restore /clp:ErrorsOnly
+          dotnet build tests/CommunityAbp.AspNetZero.FusionCache.Redis.Tests/CommunityAbp.AspNetZero.FusionCache.Redis.Tests.csproj --configuration Release --no-restore /clp:ErrorsOnly
+      - name: Test
+        run: |
+          dotnet test tests/CommunityAbp.AspNetZero.FusionCache.Tests/CommunityAbp.AspNetZero.FusionCache.Tests.csproj --configuration Release --no-build --filter 'FullyQualifiedName!~TestBase'
+          dotnet test tests/CommunityAbp.AspNetZero.FusionCache.Redis.Tests/CommunityAbp.AspNetZero.FusionCache.Redis.Tests.csproj --configuration Release --no-build --filter 'FullyQualifiedName!~TestBase'
+      - name: Pack (no build)
+        run: |
+          mkdir -p ${{ env.NuGetDirectory }}
+          dotnet pack src/CommunityAbp.AspNetZero.FusionCache/CommunityAbp.AspNetZero.FusionCache.csproj --configuration Release --no-build --output ${{ env.NuGetDirectory }} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+          dotnet pack src/CommunityAbp.AspNetZero.FusionCache.Redis/CommunityAbp.AspNetZero.FusionCache.Redis.csproj --configuration Release --no-build --output ${{ env.NuGetDirectory }} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget
+          path: |
+            ${{ env.NuGetDirectory }}/*.nupkg
+            ${{ env.NuGetDirectory }}/*.snupkg
+
+  deploy:
+    if: github.event_name == 'release'
+    needs: build_test_pack
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5  # checkout FIRST so artifact download isn't wiped
+        with:
+          fetch-depth: 0
+          show-progress: false
+      - uses: actions/download-artifact@v5
+        with:
+          name: nuget
+          path: ${{ env.NuGetDirectory }}
+      - name: List downloaded packages
+        run: |
+          if (Test-Path '${{ env.NuGetDirectory }}') {
+            Get-ChildItem '${{ env.NuGetDirectory }}' -Recurse | Write-Host
+          } else { Write-Error 'NuGetDirectory missing after download.' }
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+      - name: Publish NuGet packages
+        run: |
+          if (-not (Test-Path '${{ env.NuGetDirectory }}')) { throw 'NuGet directory not found.' }
+          $pkgs = Get-ChildItem "${{ env.NuGetDirectory }}" -Recurse -Include *.nupkg
+          if (-not $pkgs) { throw 'No .nupkg files found to publish.' }
+          foreach($file in $pkgs) {
+            dotnet nuget push $file --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+          }
