@@ -26,17 +26,17 @@ public class ProductCatalogAdminModule : AbpModule
                 typeof(ProductCatalogAdminModule).Assembly
             );
 
-        // Configure FusionCache (same config as API for consistency)
-        Configuration.Caching.UseFusionCache(options =>
-        {
-            options.DefaultCacheDuration = TimeSpan.FromMinutes(10);
-            options.EnableDistributedCache = true;
-            options.EnableBackplane = true; // Critical: enables cache sync across services
-            options.EnableFailSafe = true;
-            options.EnableCacheStampedeProtection = true;
-            options.EnableMultiTenancy = true;
-            options.KeyPrefix = "ProductCatalog";
-        });
+        //// Configure FusionCache (same config as API for consistency)
+        //Configuration.Caching.UseFusionCache(options =>
+        //{
+        //    options.DefaultCacheDuration = TimeSpan.FromMinutes(10);
+        //    options.EnableDistributedCache = true;
+        //    options.EnableBackplane = true; // Critical: enables cache sync across services
+        //    options.EnableFailSafe = true;
+        //    options.EnableCacheStampedeProtection = true;
+        //    options.EnableMultiTenancy = true;
+        //    options.KeyPrefix = "ProductCatalog";
+        //});
     }
 
     public override void Initialize()

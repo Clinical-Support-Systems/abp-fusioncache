@@ -1,5 +1,7 @@
 <Solution>
   <Folder Name="/sample/">
+    <File Path="samples/ProductCatalog.Aspire/QUICKSTART.md" />
+    <File Path="samples/ProductCatalog.Aspire/README.md" />
     <Project Path="samples/ProductCatalog.Aspire/ProductCatalog.Admin/ProductCatalog.Admin.csproj" />
     <Project Path="samples/ProductCatalog.Aspire/ProductCatalog.Api/ProductCatalog.Api.csproj" />
     <Project Path="samples/ProductCatalog.Aspire/ProductCatalog.AppHost/ProductCatalog.AppHost.csproj" />

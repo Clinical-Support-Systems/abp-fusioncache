@@ -2,7 +2,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 // Add Redis for distributed caching and backplane
 var redis = builder.AddRedis("cache")
-    .WithRedisCommander(); // Adds Redis Commander UI for cache inspection
+    .WithRedisInsight(); // Adds Redis Commander UI for cache inspection
 
 // Add PostgreSQL database
 var postgres = builder.AddPostgres("postgres")
@@ -11,6 +11,7 @@ var postgres = builder.AddPostgres("postgres")
 
 // Add Public API service (read-heavy)
 var api = builder.AddProject<Projects.ProductCatalog_Api>("api")
+    .WithHttpsEndpoint()
     .WithReference(redis)
     .WithReference(postgres)
     .WaitFor(redis)
@@ -18,6 +19,7 @@ var api = builder.AddProject<Projects.ProductCatalog_Api>("api")
 
 // Add Admin Portal service (write-heavy)
 var admin = builder.AddProject<Projects.ProductCatalog_Admin>("admin")
+    .WithHttpsEndpoint()
     .WithReference(redis)
     .WithReference(postgres)
     .WaitFor(redis)

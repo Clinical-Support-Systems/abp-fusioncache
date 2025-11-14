@@ -30,17 +30,17 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Configure ABP with FusionCache
-builder.Services.AddAbpFusionCache(options =>
-{
-    options.DefaultCacheDuration = TimeSpan.FromMinutes(10);
-    options.EnableDistributedCache = true;
-    options.EnableBackplane = true;
-    options.EnableFailSafe = true;
-    options.EnableCacheStampedeProtection = true;
-    options.EnableMultiTenancy = true;
-    options.KeyPrefix = "ProductCatalog";
-});
+//// Configure ABP with FusionCache
+//builder.Services.AddAbpFusionCache(options =>
+//{
+//    options.DefaultCacheDuration = TimeSpan.FromMinutes(10);
+//    options.EnableDistributedCache = true;
+//    options.EnableBackplane = true;
+//    options.EnableFailSafe = true;
+//    options.EnableCacheStampedeProtection = true;
+//    options.EnableMultiTenancy = true;
+//    options.KeyPrefix = "ProductCatalog";
+//});
 
 // Configure Redis for FusionCache
 builder.Services.AddAbpFusionCacheRedis(builder.Configuration, options =>
