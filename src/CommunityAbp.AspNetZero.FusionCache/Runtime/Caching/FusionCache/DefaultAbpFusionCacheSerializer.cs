@@ -1,5 +1,6 @@
-﻿using System.Text.Encodings.Web;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Abp.Dependency;
 using Abp.Json;
 using Abp.Json.SystemTextJson;
@@ -31,9 +32,10 @@ public class DefaultAbpFusionCacheSerializer : IAbpFusionCacheSerializer, ITrans
         }
 
         var actualType = type ?? value.GetType();
-        var cacheData = AbpCacheData.Create(value, actualType);
+        var options = GetJsonSerializerOptions();
+        var cacheData = AbpCacheData.Create(value, actualType, options);
 
-        return JsonSerializer.Serialize(cacheData, GetJsonSerializerOptions());
+        return JsonSerializer.Serialize(cacheData, options);
     }
 
     /// <summary>
@@ -56,7 +58,8 @@ public class DefaultAbpFusionCacheSerializer : IAbpFusionCacheSerializer, ITrans
 
         try
         {
-            var cacheData = JsonSerializer.Deserialize<AbpCacheData>(serializedValue, GetJsonSerializerOptions());
+            var options = GetJsonSerializerOptions();
+            var cacheData = AbpCacheData.Deserialize(serializedValue, options);
 
             if (cacheData == null)
             {
@@ -65,7 +68,9 @@ public class DefaultAbpFusionCacheSerializer : IAbpFusionCacheSerializer, ITrans
 
             var targetType = type ?? Type.GetType(cacheData.Type, true, true);
 
-            return cacheData.Payload.FromJsonString(targetType, GetJsonSerializerOptions());
+            return cacheData.Payload == null
+                ? null
+                : JsonSerializer.Deserialize(cacheData.Payload, targetType, options);
         }
         catch (Exception ex)
         {
@@ -95,10 +100,35 @@ public class DefaultAbpFusionCacheSerializer : IAbpFusionCacheSerializer, ITrans
             WriteIndented = false
         };
 
+        // Interesting, AbpDateTimeConverter might have a bug here. It deserializes Utc as Local incorrectly.
+        // RoundTrip_WithDateTime_ShouldPreserveValue fails when I use AbpDateTimeConverter below. Using
+        // UtcDateTimeConverter corrects it.
+
         // Add ABP-specific converters
-        options.Converters.Insert(0, new AbpDateTimeConverter());
+        options.Converters.Insert(0, new UtcDateTimeConverter());
         options.Converters.Add(new AbpJsonConverterForType());
 
         return options;
+    }
+}
+
+public class UtcDateTimeConverter : JsonConverter<DateTime>
+{
+    public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var str = reader.GetString();
+        if (str != null && str.EndsWith("Z"))
+        {
+            return DateTime.SpecifyKind(DateTime.Parse(str, null, System.Globalization.DateTimeStyles.RoundtripKind), DateTimeKind.Utc);
+        }
+        return DateTime.Parse(str ?? string.Empty);
+    }
+
+    public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+    {
+        if (value.Kind == DateTimeKind.Utc)
+            writer.WriteStringValue(value.ToString("o")); // "o" = round-trip, includes Z for UTC
+        else
+            writer.WriteStringValue(value);
     }
 }

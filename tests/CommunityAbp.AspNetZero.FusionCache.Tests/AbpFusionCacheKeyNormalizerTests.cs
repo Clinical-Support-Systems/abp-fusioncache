@@ -44,18 +44,22 @@ public class AbpFusionCacheKeyNormalizerTests
     public async Task NormalizeKey_WithNullKey_ShouldThrowArgumentException()
     {
         // Act & Assert
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
         await Assert.That(() => Task.FromResult(_normalizer.NormalizeKey(null!)))
             .Throws<ArgumentException>()
-            .With(ex => ex.Message.Contains("Cache key cannot be null or empty"));
+            .WithMessageContaining("Cache key cannot be null or empty");
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
     }
 
     [Test]
     public async Task NormalizeKey_WithEmptyKey_ShouldThrowArgumentException()
     {
         // Act & Assert
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
         await Assert.That(() => Task.FromResult(_normalizer.NormalizeKey(string.Empty)))
             .Throws<ArgumentException>()
-            .With(ex => ex.Message.Contains("Cache key cannot be null or empty"));
+            .WithMessageContaining("Cache key cannot be null or empty");
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
     }
 
     #endregion

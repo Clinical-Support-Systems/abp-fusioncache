@@ -57,7 +57,7 @@ public class AbpFusionCacheTests
         var expectedValue = "test";
 
         _keyNormalizer.NormalizeKey(key).Returns(normalizedKey);
-        _fusionCache.TryGet<string>(normalizedKey).Returns(new MaybeValue<string>(serializedValue, true));
+        _fusionCache.TryGet<string>(normalizedKey).Returns(MaybeValue<string>.FromValue(serializedValue));
         _serializer.Deserialize(serializedValue).Returns(expectedValue);
 
         // Act
@@ -78,7 +78,7 @@ public class AbpFusionCacheTests
         var normalizedKey = "normalized:nonExistingKey";
 
         _keyNormalizer.NormalizeKey(key).Returns(normalizedKey);
-        _fusionCache.TryGet<string>(normalizedKey).Returns(new MaybeValue<string>());
+        _fusionCache.TryGet<string>(normalizedKey).Returns(default(MaybeValue<string>));
 
         // Act
         var result = _cache.GetOrDefault(key);
@@ -104,7 +104,7 @@ public class AbpFusionCacheTests
         var expectedValue = "test";
 
         _keyNormalizer.NormalizeKey(key).Returns(normalizedKey);
-        _fusionCache.TryGet<string>(normalizedKey).Returns(new MaybeValue<string>(serializedValue, true));
+        _fusionCache.TryGet<string>(normalizedKey).Returns(MaybeValue<string>.FromValue(serializedValue));
         _serializer.Deserialize(serializedValue).Returns(expectedValue);
 
         // Act
@@ -126,7 +126,7 @@ public class AbpFusionCacheTests
         var normalizedKey = "normalized:nonExistingKey";
 
         _keyNormalizer.NormalizeKey(key).Returns(normalizedKey);
-        _fusionCache.TryGet<string>(normalizedKey).Returns(new MaybeValue<string>());
+        _fusionCache.TryGet<string>(normalizedKey).Returns(default(MaybeValue<string>));
 
         // Act
         var result = _cache.TryGetValue(key, out var value);
@@ -151,7 +151,7 @@ public class AbpFusionCacheTests
         var expectedValue = "test";
 
         _keyNormalizer.NormalizeKey(key).Returns(normalizedKey);
-        _fusionCache.TryGetAsync<string>(normalizedKey).Returns(Task.FromResult(new MaybeValue<string>(serializedValue, true)));
+        _fusionCache.TryGetAsync<string>(normalizedKey).Returns(ValueTask.FromResult(MaybeValue<string>.FromValue(serializedValue)));
         _serializer.Deserialize(serializedValue).Returns(expectedValue);
 
         // Act
@@ -172,7 +172,7 @@ public class AbpFusionCacheTests
         var normalizedKey = "normalized:nonExistingKey";
 
         _keyNormalizer.NormalizeKey(key).Returns(normalizedKey);
-        _fusionCache.TryGetAsync<string>(normalizedKey).Returns(Task.FromResult(new MaybeValue<string>()));
+        _fusionCache.TryGetAsync<string>(normalizedKey).Returns(ValueTask.FromResult(default(MaybeValue<string>)));
 
         // Act
         var result = await _cache.GetOrDefaultAsync(key);
@@ -414,12 +414,11 @@ public class AbpFusionCacheTests
     public async Task Clear_WhenNotSupported_ShouldThrowNotSupportedException()
     {
         // Arrange
-        _fusionCache.When(x => x.Clear()).Do(_ => throw new NotSupportedException());
+        _fusionCache.When(x => x.Clear()).Do(_ => throw new NotSupportedException("Clear operation is not supported"));
 
         // Act & Assert
-        await Assert.That(() => Task.Run(() => _cache.Clear()))
-            .Throws<NotSupportedException>()
-            .With(ex => ex.Message.Contains("Clear operation is not supported"));
+        var ex = await Assert.That(() => Task.Run(() => _cache.Clear())).Throws<NotSupportedException>();
+        await Assert.That(ex?.Message).Contains("Clear operation is not supported");
     }
 
     #endregion
@@ -440,12 +439,11 @@ public class AbpFusionCacheTests
     public async Task ClearAsync_WhenNotSupported_ShouldThrowNotSupportedException()
     {
         // Arrange
-        _fusionCache.ClearAsync().Returns<Task>(_ => throw new NotSupportedException());
+        _fusionCache.ClearAsync().Returns(ValueTask.FromException(new NotSupportedException("Clear operation is not supported")));
 
         // Act & Assert
-        await Assert.That(async () => await _cache.ClearAsync())
-            .Throws<NotSupportedException>()
-            .With(ex => ex.Message.Contains("Clear operation is not supported"));
+        var ex = await Assert.That(async () => await _cache.ClearAsync()).Throws<NotSupportedException>();
+        await Assert.That(ex?.Message).Contains("Clear operation is not supported");
     }
 
     #endregion

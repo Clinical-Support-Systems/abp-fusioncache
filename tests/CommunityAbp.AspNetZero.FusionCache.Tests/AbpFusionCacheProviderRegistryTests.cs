@@ -9,10 +9,9 @@ namespace CommunityAbp.AspNetZero.FusionCache.Tests;
 
 public class AbpFusionCacheProviderRegistryTests : TestBaseWithLocalIocManager
 {
-    private AbpFusionCacheProviderRegistry _registry = null!;
+    private readonly AbpFusionCacheProviderRegistry _registry = null!;
 
-    [Before(Test)]
-    public void Setup()
+    public AbpFusionCacheProviderRegistryTests()
     {
         _registry = new AbpFusionCacheProviderRegistry(LocalIocManager);
 
@@ -92,7 +91,7 @@ public class AbpFusionCacheProviderRegistryTests : TestBaseWithLocalIocManager
 
         // Assert
         await Assert.That(provider).IsNotNull();
-        await Assert.That(provider).IsTypeOf(typeof(TestDistributedProvider));
+        await Assert.That(provider).IsTypeOf<TestDistributedProvider>();
         await Assert.That(provider.ProviderName).IsEqualTo("TestDistributed");
     }
 
@@ -100,9 +99,10 @@ public class AbpFusionCacheProviderRegistryTests : TestBaseWithLocalIocManager
     public async Task GetDistributedProvider_WithUnregisteredProvider_ShouldThrowArgumentException()
     {
         // Act & Assert
-        await Assert.That(() => Task.FromResult(_registry.GetDistributedProvider("NonExistent")))
-            .Throws<ArgumentException>()
-            .With(ex => ex.Message.Contains("Distributed cache provider 'NonExistent' is not registered"));
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
+        var ex = await Assert.That(() => Task.FromResult(_registry.GetDistributedProvider("NonExistent"))).Throws<ArgumentException>();
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
+        await Assert.That(ex?.Message).Contains("Distributed cache provider 'NonExistent' is not registered");
     }
 
     [Test]
@@ -136,7 +136,7 @@ public class AbpFusionCacheProviderRegistryTests : TestBaseWithLocalIocManager
 
         // Assert
         await Assert.That(provider).IsNotNull();
-        await Assert.That(provider).IsTypeOf(typeof(TestBackplaneProvider));
+        await Assert.That(provider).IsTypeOf<TestBackplaneProvider>();
         await Assert.That(provider.ProviderName).IsEqualTo("TestBackplane");
     }
 
@@ -144,9 +144,10 @@ public class AbpFusionCacheProviderRegistryTests : TestBaseWithLocalIocManager
     public async Task GetBackplaneProvider_WithUnregisteredProvider_ShouldThrowArgumentException()
     {
         // Act & Assert
-        await Assert.That(() => Task.FromResult(_registry.GetBackplaneProvider("NonExistent")))
-            .Throws<ArgumentException>()
-            .With(ex => ex.Message.Contains("Backplane provider 'NonExistent' is not registered"));
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
+        var ex = await Assert.That(() => Task.FromResult(_registry.GetBackplaneProvider("NonExistent"))).Throws<ArgumentException>();
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
+        await Assert.That(ex?.Message).Contains("Backplane provider 'NonExistent' is not registered");
     }
 
     #endregion

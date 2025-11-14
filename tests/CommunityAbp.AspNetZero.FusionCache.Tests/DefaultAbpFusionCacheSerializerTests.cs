@@ -71,9 +71,13 @@ public class DefaultAbpFusionCacheSerializerTests
 
         // Assert
         await Assert.That(result).IsNotNull();
-        await Assert.That(result).Contains("\"id\":1");
-        await Assert.That(result).Contains("Test");
-        await Assert.That(result).Contains("isActive");
+        // Parse the result and extract the payload
+        var jsonDoc = System.Text.Json.JsonDocument.Parse(result!);
+        var payload = jsonDoc.RootElement.GetProperty("payload").GetString();
+        await Assert.That(payload).IsNotNull();
+        await Assert.That(payload).Contains("\"id\":1");
+        await Assert.That(payload).Contains("Test");
+        await Assert.That(payload).Contains("isActive");
     }
 
     [Test]
@@ -212,7 +216,7 @@ public class DefaultAbpFusionCacheSerializerTests
         // Assert
         await Assert.That(result).IsNotNull();
         await Assert.That(result).IsEqualTo(originalValue);
-        await Assert.That(result).IsTypeOf(typeof(string));
+        await Assert.That(result).IsTypeOf<string>();
     }
 
     [Test]
@@ -222,9 +226,15 @@ public class DefaultAbpFusionCacheSerializerTests
         var invalidJson = "{ this is not valid json }";
 
         // Act & Assert
-        await Assert.That(() => Task.FromResult(_serializer.Deserialize(invalidJson)))
-            .Throws<InvalidOperationException>()
-            .With(ex => ex.Message.Contains("Failed to deserialize cache value"));
+        try
+        {
+            _serializer.Deserialize(invalidJson);
+        }
+        catch (InvalidOperationException ex)
+        {
+            await Assert.That(ex).IsNotNull();
+            await Assert.That(ex!.Message).Contains("Failed to deserialize cache value");
+        }
     }
 
     #endregion

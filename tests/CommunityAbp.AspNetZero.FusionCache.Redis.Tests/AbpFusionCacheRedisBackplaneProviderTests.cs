@@ -177,9 +177,9 @@ public class AbpFusionCacheRedisBackplaneProviderTests
         var emptyConfig = configBuilder.Build();
 
         // Act & Assert
-        await Assert.That(() => Task.Run(() => _provider.ConfigureServices(services, emptyConfig, _options)))
-            .Throws<InvalidOperationException>()
-            .With(ex => ex.Message.Contains("Redis connection string is not configured"));
+        var ex = await Assert.That(() => Task.Run(() => _provider.ConfigureServices(services, emptyConfig, _options)))
+            .Throws<InvalidOperationException>();
+        await Assert.That(ex.Message).Contains("Redis connection string is not configured");
     }
 
     #endregion

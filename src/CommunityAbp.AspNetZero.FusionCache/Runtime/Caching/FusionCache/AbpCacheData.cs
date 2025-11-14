@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 
 namespace CommunityAbp.AspNetZero.FusionCache.Runtime.Caching.FusionCache;
 
@@ -10,7 +10,7 @@ public class AbpCacheData
     public string? Type { get; set; }
     public string? Payload { get; set; }
 
-    public static AbpCacheData Create(object value, Type type)
+    public static AbpCacheData Create(object value, Type type, JsonSerializerOptions options)
     {
         if (value == null)
         {
@@ -26,26 +26,17 @@ public class AbpCacheData
         return new AbpCacheData
         {
             Type = actualType.AssemblyQualifiedName,
-            Payload = JsonSerializer.Serialize(value, actualType, GetSerializationOptions())
+            Payload = JsonSerializer.Serialize(value, actualType, options)
         };
     }
 
-    public static AbpCacheData? Deserialize(string serializedValue)
+    public static AbpCacheData? Deserialize(string serializedValue, JsonSerializerOptions options)
     {
         if (string.IsNullOrEmpty(serializedValue))
         {
             return null;
         }
 
-        return JsonSerializer.Deserialize<AbpCacheData>(serializedValue, GetSerializationOptions());
-    }
-
-    private static JsonSerializerOptions GetSerializationOptions()
-    {
-        return new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = false
-        };
+        return JsonSerializer.Deserialize<AbpCacheData>(serializedValue, options);
     }
 }
