@@ -55,10 +55,10 @@ jobs:
           dotnet build src/CommunityAbp.AspNetZero.FusionCache.Redis/CommunityAbp.AspNetZero.FusionCache.Redis.csproj --configuration Release --no-restore /clp:ErrorsOnly
           dotnet build tests/CommunityAbp.AspNetZero.FusionCache.Tests/CommunityAbp.AspNetZero.FusionCache.Tests.csproj --configuration Release --no-restore /clp:ErrorsOnly
           dotnet build tests/CommunityAbp.AspNetZero.FusionCache.Redis.Tests/CommunityAbp.AspNetZero.FusionCache.Redis.Tests.csproj --configuration Release --no-restore /clp:ErrorsOnly
-      # - name: Test
-      #   run: |
-      #     dotnet test tests/CommunityAbp.AspNetZero.FusionCache.Tests/CommunityAbp.AspNetZero.FusionCache.Tests.csproj --configuration Release --no-build --filter 'FullyQualifiedName!~TestBase'
-      #     dotnet test tests/CommunityAbp.AspNetZero.FusionCache.Redis.Tests/CommunityAbp.AspNetZero.FusionCache.Redis.Tests.csproj --configuration Release --no-build --filter 'FullyQualifiedName!~TestBase'
+      - name: Test
+        run: |
+          dotnet test tests/CommunityAbp.AspNetZero.FusionCache.Tests/CommunityAbp.AspNetZero.FusionCache.Tests.csproj --configuration Release --no-build --filter 'FullyQualifiedName!~TestBase'
+          dotnet test tests/CommunityAbp.AspNetZero.FusionCache.Redis.Tests/CommunityAbp.AspNetZero.FusionCache.Redis.Tests.csproj --configuration Release --no-build --filter 'FullyQualifiedName!~TestBase'
       - name: Pack (no build)
         run: |
           mkdir -p ${{ env.NuGetDirectory }}
