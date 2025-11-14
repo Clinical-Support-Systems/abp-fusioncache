@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "ProductCatalog.AppHost": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:5001",
+      "environmentVariables": {
+        "ASPNETCORE_URLS": "https://localhost:5001",
+        "ASPIRE_DASHBOARD_OTLP_HTTP_ENDPOINT_URL": "https://localhost:4318",
+        "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "https://localhost:5002"
+      }
+    }
+  }
+}

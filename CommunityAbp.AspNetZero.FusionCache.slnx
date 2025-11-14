@@ -1,4 +1,12 @@
 <Solution>
+  <Folder Name="/sample/">
+    <Project Path="samples/ProductCatalog.Aspire/ProductCatalog.Admin/ProductCatalog.Admin.csproj" />
+    <Project Path="samples/ProductCatalog.Aspire/ProductCatalog.Api/ProductCatalog.Api.csproj" />
+    <Project Path="samples/ProductCatalog.Aspire/ProductCatalog.AppHost/ProductCatalog.AppHost.csproj" />
+    <Project Path="samples/ProductCatalog.Aspire/ProductCatalog.Infrastructure/ProductCatalog.Infrastructure.csproj" />
+    <Project Path="samples/ProductCatalog.Aspire/ProductCatalog.ServiceDefaults/ProductCatalog.ServiceDefaults.csproj" />
+    <Project Path="samples/ProductCatalog.Aspire/ProductCatalog.Shared/ProductCatalog.Shared.csproj" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
