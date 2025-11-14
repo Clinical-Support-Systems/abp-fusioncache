@@ -4,8 +4,8 @@ Get up and running with the ProductCatalog sample in 5 minutes!
 
 ## Prerequisites
 
-- ✅ .NET 9.0 SDK ([Download](https://dotnet.microsoft.com/download))
-- ✅ Docker Desktop ([Download](https://www.docker.com/products/docker-desktop))
+- [x] .NET 9.0 SDK ([Download](https://dotnet.microsoft.com/download))
+- [x] Docker Desktop ([Download](https://www.docker.com/products/docker-desktop))
 
 ## Steps
 

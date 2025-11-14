@@ -11,38 +11,28 @@ This sample showcases a **Product Catalog System** with two services:
 
 ### Key Features Demonstrated
 
-✅ **Hybrid L1/L2 Caching** - Memory + Redis for optimal performance
-✅ **Redis Backplane** - Cache synchronization across multiple services
-✅ **Fail-Safe Mode** - Continues serving stale data when Redis is unavailable
-✅ **Cache Stampede Protection** - Prevents database overload on cache misses
-✅ **Multi-Tenancy** - Automatic tenant-aware cache isolation
-✅ **Aspire Orchestration** - Seamless local development with containers
-✅ **Health Checks & Telemetry** - Full observability via Aspire dashboard
+- [x] **Hybrid L1/L2 Caching** - Memory + Redis for optimal performance
+- [x] **Redis Backplane** - Cache synchronization across multiple services
+- [x] **Fail-Safe Mode** - Continues serving stale data when Redis is unavailable
+- [x] **Cache Stampede Protection** - Prevents database overload on cache misses
+- [x] **Multi-Tenancy** - Automatic tenant-aware cache isolation
+- [x] **Aspire Orchestration** - Seamless local development with containers
+- [x] **Health Checks & Telemetry** - Full observability via Aspire dashboard
 
 ---
 
 ## 🏗️ Architecture
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    .NET Aspire AppHost                       │
-│         Orchestrates: Redis, PostgreSQL, 2 Services          │
-└─────────────────────────────────────────────────────────────┘
-                            │
-        ┌───────────────────┼───────────────────┐
-        │                   │                   │
-        ▼                   ▼                   ▼
-┌──────────────┐    ┌──────────────┐    ┌──────────────┐
-│  Public API  │    │ Admin Portal │    │    Redis     │
-│ (ASP.NET API)│◄──►│ (ASP.NET MVC)│◄──►│  + Backplane │
-└──────┬───────┘    └──────┬───────┘    └──────────────┘
-       │                   │
-       └───────────────────┘
-                  │
-          ┌───────▼────────┐
-          │   PostgreSQL   │
-          │    Database    │
-          └────────────────┘
+```mermaid
+graph TD
+    A[".NET Aspire AppHost"] --> B["Public API"]
+    A --> C["Admin Portal"]
+    A --> D["Redis"]
+    B -- "◄──►" --> C
+    B -- "◄──►" --> D
+    C -- "◄──►" --> D
+    B --> E["PostgreSQL Database"]
+    C --> E
 ```
 
 ### Data Flow
