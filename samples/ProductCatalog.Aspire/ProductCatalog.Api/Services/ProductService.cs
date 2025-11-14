@@ -45,7 +45,7 @@ public class ProductService : ITransientDependency
 
         var product = await cache.GetAsync(
             productId.ToString(),
-            async () =>
+            async (key) =>
             {
                 _logger.LogInformation("Cache MISS for product {ProductId} - fetching from database", productId);
 
@@ -64,7 +64,7 @@ public class ProductService : ITransientDependency
             _logger.LogInformation("Cache HIT for product {ProductId}", productId);
         }
 
-        return product;
+        return (ProductDto?)product;
     }
 
     /// <summary>
@@ -83,22 +83,28 @@ public class ProductService : ITransientDependency
 
         var products = await cache.GetAsync(
             cacheKey,
-            async () =>
+            async (key) =>
             {
                 _logger.LogInformation("Cache MISS for {CacheKey} - fetching from database", cacheKey);
 
                 var query = _productRepository.GetAll();
 
+                List<Product> entities;
                 if (activeOnly)
                 {
-                    query = query.Where(p => p.IsActive);
+                    entities = await _productRepository.GetAllListAsync(p => p.IsActive);
+                }
+                else
+                {
+                    entities = await _productRepository.GetAllListAsync();
                 }
 
-                var entities = await _productRepository.GetAllListAsync(query);
                 return entities.Select(MapToDto).ToList();
-            },
-            slidingExpireTime: TimeSpan.FromMinutes(5) // Shorter cache for lists
-        );
+            }
+            //,slidingExpireTime: TimeSpan.FromMinutes(5) // Shorter cache for lists
+        ) as List<ProductDto>;
+
+        products ??= new List<ProductDto>();
 
         _logger.LogInformation("Returning {Count} products from cache", products.Count);
         return products;
@@ -117,9 +123,9 @@ public class ProductService : ITransientDependency
             category,
             _session.TenantId);
 
-        return await cache.GetAsync(
+        var products = await cache.GetAsync(
             cacheKey,
-            async () =>
+            async (key) =>
             {
                 _logger.LogInformation("Cache MISS for category {Category}", category);
 
@@ -128,9 +134,11 @@ public class ProductService : ITransientDependency
                 );
 
                 return entities.Select(MapToDto).ToList();
-            },
-            slidingExpireTime: TimeSpan.FromMinutes(5)
-        );
+            }
+            //,slidingExpireTime: TimeSpan.FromMinutes(5)
+        ) as List<ProductDto>;
+
+        return products ?? new List<ProductDto>();
     }
 
     /// <summary>

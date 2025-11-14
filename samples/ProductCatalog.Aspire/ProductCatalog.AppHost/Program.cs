@@ -23,4 +23,4 @@ var admin = builder.AddProject<Projects.ProductCatalog_Admin>("admin")
     .WaitFor(redis)
     .WaitFor(postgres);
 
-builder.Build().Run();
+await builder.Build().RunAsync();

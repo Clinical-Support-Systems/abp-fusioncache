@@ -7,8 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0" />
-    <PackageReference Include="Aspire.StackExchange.Redis" Version="9.0.0" />
+    <PackageReference Include="Abp.AspNetCore" Version="10.3.0" />
+    <PackageReference Include="Abp.Castle.Log4Net" Version="10.3.0" />
+    <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.5.2" />
+    <PackageReference Include="Aspire.StackExchange.Redis" Version="13.0.0" />
   </ItemGroup>
 
   <ItemGroup>

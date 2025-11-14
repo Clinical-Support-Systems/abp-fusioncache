@@ -2,6 +2,7 @@ using Abp.EntityFrameworkCore;
 using Abp.EntityFrameworkCore.Configuration;
 using Abp.Modules;
 using Abp.Reflection.Extensions;
+using Microsoft.EntityFrameworkCore;
 using ProductCatalog.Infrastructure.EntityFramework;
 using ProductCatalog.Shared;
 
