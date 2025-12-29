@@ -57,6 +57,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Abp" Version="10.3.*" />
+		<PackageReference Include="AsyncKeyedLock" Version="7.1.8" />
 		<PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.39">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -67,7 +68,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="ZiggyCreatures.FusionCache" Version="2.4.*" />
+		<PackageReference Include="ZiggyCreatures.FusionCache.Locking.AsyncKeyed" Version="2.4.0" />
 		<PackageReference Include="ZiggyCreatures.FusionCache.Serialization.SystemTextJson" Version="2.4.0" />
 	</ItemGroup>
 
