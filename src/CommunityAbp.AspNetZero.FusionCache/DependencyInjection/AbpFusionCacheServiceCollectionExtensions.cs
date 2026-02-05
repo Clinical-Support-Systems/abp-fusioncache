@@ -1,10 +1,11 @@
-﻿using CommunityAbp.AspNetZero.FusionCache.Internal;
+using CommunityAbp.AspNetZero.FusionCache.Internal;
 using CommunityAbp.AspNetZero.FusionCache.Options;
 using CommunityAbp.AspNetZero.FusionCache.Providers;
 using CommunityAbp.AspNetZero.FusionCache.Providers.Null;
 using CommunityAbp.AspNetZero.FusionCache.Runtime.Caching.FusionCache;
 using Microsoft.Extensions.DependencyInjection;
 using ZiggyCreatures.Caching.Fusion;
+using ZiggyCreatures.Caching.Fusion.Locking.AsyncKeyed;
 
 namespace CommunityAbp.AspNetZero.FusionCache.DependencyInjection;
 
@@ -38,7 +39,7 @@ public static class AbpFusionCacheServiceCollectionExtensions
             }
 
             fusionOptions.DefaultEntryOptions = opt;
-        });
+        }).WithMemoryLocker(new AsyncKeyedMemoryLocker());
 
         // Register ABP-specific services
         services.AddSingleton<IAbpFusionCacheKeyNormalizer, AbpFusionCacheKeyNormalizer>();
